@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PASUMAI TRADERS Billing App</title>
+<link rel="manifest" href="data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYXBwLmh0bWwiLCJzb3VyY2VzIjpbImFwcC5odG1sIl0sIm5hbWVzIjpbIk1hbml0aW5nQXBwIl0sIm1hcHBpbmdzIjoiQXJuIGFuZCBzZW5kIGFuIGFwcCB3aXRoIGVuY29kaW5nZCBkYXRhLiBJdCBpcyBhcHBlYXJzZWQgd2l0aCBhIHN0YXRpYyBhcHAsIGFuZCBzaG91bGQgYmUgdXNlZCBpbiBhIG1vYmlsZSBmcm9tIGFuIGFwcGxpY2F0aW9uIHNlcnZlci4iLCJzb3VyY2VDb250ZW50IjpbIkFwcGxpY2F0aW9uIHZpZGVvIiwiZGF0YSJdLCJzb3VyY2VSb290IjoiIn0=" />
+<style>
+  /* Reset and base styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f0;
+    color: #333;
+    line-height: 1.4;
+  }
+
+  /* Colors */
+  :root {
+    --dark-green: #006400;
+    --light-green: #90ee90;
+    --white: #fff;
+  }
+
+  /* Header */
+  header {
+    background-color: var(--dark-green);
+    color: var(--white);
+    padding: 1rem;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+  }
+
+  header p {
+    font-size: 0.9rem;
+  }
+
+  /* Container */
+ .container {
+    padding: 1rem;
+  }
+
+  /* Buttons */
+  button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 0.5rem 0;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  /* Specific button styles */
+  .btn-primary {
+    background-color: var(--dark-green);
+    color: var(--white);
+  }
+
+  .btn-secondary {
+    background-color: var(--light-green);
+    color: #333;
+  }
+
+  /* Sections */
+section {
+  margin-bottom: 1rem;
+  background: var(--white);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+/* Product grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+/* Product card */
+.product-card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.product-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.product-name {
+  font-weight: bold;
+  margin: 0.5rem 0;
+  text-align: center;
+}
+
+.price {
+  color: var(--dark-green);
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.quantity-controls button {
+  background-color: var(--light-green);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.quantity-controls button:hover {
+  background-color: #76c576;
+}
+
+.add-to-cart {
+  background-color: var(--dark-green);
+  color: var(--white);
+  padding: 0.75rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.add-to-cart:hover {
+  background-color: #004d00;
+}
+
+/* Cart styles */
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.cart-table th, .cart-table td {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.total-section {
+  margin-top: 1rem;
+  text-align: right;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Customer Details */
+.customer-details input, select, textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.customer-details label {
+  font-weight: bold;
+  display: block;
+  margin-top: 1rem;
+}
+
+/* QR code section */
+.qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#qrcode {
+  margin: 1rem 0;
+}
+
+/* Buttons in QR section */
+.qr-buttons {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+#invoice {
+  white-space: pre-wrap;
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+}
+
+/* Dashboard charts */
+.chart-container {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+}
+
+.chart-box {
+  margin-bottom: 1rem;
+}
+
+/* Admin Panel */
+.admin-section {
+  display: none;
+  padding: 1rem;
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.admin-section.active {
+  display: block;
+}
+
+/* Toggle Switches for Settings */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: var(--dark-green);
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Responsive adjustments */
+@media(max-width: 768px){
+  header h1 {
+    font-size: 1.2rem;
+  }
+  button {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>PASUMAI TRADERS</h1>
+  <p>Health with Nature</p>
+</header>
+
+<div class="container" id="main-view">
+
+  <!-- Home Screen -->
+  <section id="home-screen">
+    <h2>Welcome</h2>
+    <button class="btn-primary" onclick="showView('products-view')">Shop Now</button>
+    <button class="btn-secondary" onclick="showView('report-view')">Reports</button>
+    <button class="btn-secondary" onclick="showView('dashboard-view')">Dashboard</button>
+    <button class="btn-secondary" onclick="showView('admin-view')">Admin Panel</button>
+  </section>
+
+  <!-- Products View -->
+  <section id="products-view" style="display:none;">
+    <h2>Products</h2>
+    <div class="products-grid" id="products-grid"></div>
+    <button class="btn-secondary" onclick="showView('cart-view')">Go to Cart</button>
+    <button class="btn-secondary" onclick="showView('home-screen')">Home</button>
+  </section>
+
+  <!-- Cart View -->
+  <section id="cart-view" style="display:none;">
+    <h2>Shopping Cart</h2>
+    <table class="cart-table" id="cart-table">
+      <thead>
+        <tr>
+          <th>Product</th><th>Qty</th><th>Price</th><th>Total</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="total-section" id="cart-total"></div>
+    <button class="btn-primary" onclick="showView('customer-details')">Proceed to Customer Details</button>
+    <button class="btn-secondary" onclick="clearCart()">Clear Cart</button>
+    <button class="btn-secondary" onclick="showView('products-view')">Back to Products</button>
+  </section>
+
+  <!-- Customer Details -->
+  <section id="customer-details" style="display:none;">
+    <h2>Customer Details</h2>
+    <div class="customer-details">
+      <label>Name</label>
+      <input type="text" id="cust-name" placeholder="Customer Name"/>
+      <label>Phone</label>
+      <input type="text" id="cust-phone" placeholder="Phone Number"/>
+      <label>Payment Method</label>
+      <select id="payment-method">
+        <option value="Cash">Cash</option>
+        <option value="UPI">UPI</option>
+        <option value="Card">Card</option>
+        <option value="Credit">Credit</option>
+      </select>
+      <label>Notes</label>
+      <textarea id="cust-notes" rows="3" placeholder="Additional notes"></textarea>
+    </div>
+    <button class="btn-primary" onclick="generateBill()">Generate Bill</button>
+    <button class="btn-secondary" onclick="showView('cart-view')">Back to Cart</button>
+  </section>
+
+  <!-- Billing / Invoice -->
+  <section id="billing-section" style="display:none;">
+    <h2>Invoice</h2>
+    <div id="invoice-details"></div>
+    <div style="margin-top:1rem;">
+      <button class="btn-primary" onclick="downloadPDF()">Download PDF</button>
+      <button class="btn-secondary" onclick="printBill()">Print</button>
+      <button class="btn-secondary" onclick="shareBill()">Share</button>
+      <button class="btn-secondary" onclick="newBill()">New Bill</button>
+    </div>
+  </section>
+
+  <!-- Reports -->
+  <section id="report-view" style="display:none;">
+    <h2>Reports</h2>
+    <button class="btn-secondary" onclick="generateDailyReport()">Daily Sales</button>
+    <button class="btn-secondary" onclick="generateMonthlyReport()">Monthly Sales</button>
+    <button class="btn-secondary" onclick="generateYearlyReport()">Yearly Sales</button>
+    <div id="report-output" style="margin-top:1rem; overflow:auto; max-height:300px;"></div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dashboard-view" style="display:none;">
+    <h2>Dashboard</h2>
+    <div class="chart-container">
+      <div class="chart-box">
+        <canvas id="salesChart"></canvas>
+      </div>
+    </div>
+    <button class="btn-secondary" onclick="updateDashboard()">Refresh Charts</button>
+  </section>
+
+  <!-- Admin Panel -->
+  <section id="admin-view" class="admin-section">
+    <h2>Admin Panel</h2>
+    <label>Enter Password</label>
+    <input type="password" id="admin-pass"/>
+    <button class="btn-primary" onclick="checkAdminPassword()">Login</button>
+    <div id="admin-functions" style="margin-top:1rem; display:none;">
+      <button class="btn-secondary" onclick="changeAdminPassword()">Change Password</button>
+      <button class="btn-secondary" onclick="addProduct()">Add Product</button>
+      <button class="btn-secondary" onclick="deleteProduct()">Delete Product</button>
+      <button class="btn-secondary" onclick="editProduct()">Edit Product</button>
+      <button class="btn-secondary" onclick="updateShopInfo()">Shop Info</button>
+      <button class="btn-secondary" onclick="backupData()">Backup Data</button>
+      <button class="btn-secondary" onclick="restoreData()">Restore Data</button>
+      <button class="btn-secondary" onclick="resetAll()">Reset All Data</button>
+      <button class="btn-secondary" onclick="logoutAdmin()">Logout</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- QR Code Section -->
+<section id="qr-section" style="display:none; text-align:center; padding:1rem;">
+  <h2>QR Code Payment</h2>
+  <div id="qrcode"></div>
+  <div class="qr-buttons">
+    <button class="btn-primary" onclick="payNow()">Pay Now</button>
+    <button class="btn-secondary" onclick="paymentReceived()">Payment Received</button>
+    <button class="btn-secondary" onclick="cancelPayment()">Cancel</button>
+  </div>
+</section>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/dist/qrcode.min.js"></script>
+
+<script>
+/* =================== Data Initialization =================== */
+
+let products = [];
+let cart = [];
+let sales = [];
+let bills = [];
+let settings = {
+  shopName: 'PASUMAI TRADERS',
+  slogan: 'Health with Nature',
+  currencySymbol: '₹',
+  gstEnabled: true,
+  darkMode: false,
+  soundEnabled: true,
+  notificationsEnabled: true,
+  invoiceFooter: '',
+};
+let adminPassword = 'admin123';
+
+// Load from localStorage if available
+if(localStorage.getItem('pasumaiData')){
+  const data = JSON.parse(localStorage.getItem('pasumaiData'));
+  products = data.products || [];
+  cart = data.cart || [];
+  sales = data.sales || [];
+  bills = data.bills || [];
+  settings = {...settings, ...data.settings};
+  adminPassword = data.adminPassword || 'admin123';
+}else{
+  // Initialize default products
+  products = [
+    {id:1, name:'JOHAN Sesame Oil 500ml', price:200, image:'https://via.placeholder.com/150?text=Sesame+500ml', stock:50},
+    {id:2, name:'JOHAN Sesame Oil 1 Litre', price:400, image:'https://via.placeholder.com/150?text=Sesame+1L', stock:50},
+    {id:3, name:'JOHAN Groundnut Oil 500ml', price:140, image:'https://via.placeholder.com/150?text=Groundnut+500ml', stock:50},
+    {id:4, name:'JOHAN Groundnut Oil 1 Litre', price:280, image:'https://via.placeholder.com/150?text=Groundnut+1L', stock:50},
+    {id:5, name:'JOHAN Coconut Oil 500ml', price:200, image:'https://via.placeholder.com/150?text=Coconut+500ml', stock:50},
+    {id:6, name:'JOHAN Coconut Oil 1 Litre', price:400, image:'https://via.placeholder.com/150?text=Coconut+1L', stock:50},
+    {id:7, name:'Fortune Atta 1+1', price:107, image:'https://via.placeholder.com/150?text=Atta+1+1', stock:50},
+    {id:8, name:'Fortune Basmati Rice 1+1', price:280, image:'https://via.placeholder.com/150?text=Rice+1+1', stock:50},
+    {id:9, name:'Fortune Sunflower Oil', price:170, image:'https://via.placeholder.com/150?text=Sunflower', stock:50},
+    {id:10, name:'Rajini Palm Oil 1L', price:145, image:'https://via.placeholder.com/150?text=Palm+Oil', stock:50},
+    {id:11, name:'Nabati Wafers', price:10, image:'https://via.placeholder.com/150?text=Wafers', stock:50},
+    {id:12, name:'Egg', price:8, image:'https://via.placeholder.com/150?text=Egg', stock:50},
+  ];
+}
+
+/* =================== Utility Functions =================== */
+
+function saveData() {
+  localStorage.setItem('pasumaiData', JSON.stringify({
+    products, cart, sales, bills, settings, adminPassword
+  }));
+}
+
+function showView(viewId){
+  document.querySelectorAll('section').forEach(sec => sec.style.display='none');
+  document.getElementById(viewId).style.display='block';
+  if(viewId==='products-view') renderProducts();
+  if(viewId==='cart-view') renderCart();
+  if(viewId==='report-view') generateReport();
+  if(viewId==='dashboard-view') updateDashboard();
+}
+
+/* =================== Products Rendering =================== */
+
+function renderProducts(){
+  const container = document.getElementById('products-grid');
+  container.innerHTML = '';
+  products.forEach(p => {
+    const card = document.createElement('div');
+    card.className='product-card';
+    card.innerHTML=`
+      <img src="${p.image}" alt="${p.name}"/>
+      <div class="product-name">${p.name}</div>
+      <div class="price">${settings.currencySymbol}${p.price}</div>
+      <div class="quantity-controls">
+        <button onclick="changeQuantity('${p.id}',-1)">-</button>
+        <span id="qty-${p.id}">0</span>
+        <button onclick="changeQuantity('${p.id}',1)">+</button>
+      </div>
+      <button class="add-to-cart" onclick="addToCart('${p.id}')">Add to Cart</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function changeQuantity(productId, delta){
+  let item = document.getElementById(`qty-${productId}`);
+  let qty = parseInt(item.textContent);
+  qty += delta;
+  if(qty<0) qty=0;
+  item.textContent=qty;
+}
+
+function addToCart(productId){
+  const product = products.find(p=>p.id==productId);
+  const qtySpan = document.getElementById(`qty-${productId}`);
+  const qty = parseInt(qtySpan.textContent);
+  if(qty<=0) return;
+  const cartItem = cart.find(c=>c.id==product.id);
+  if(cartItem){
+    cartItem.quantity += qty;
+  }else{
+    cart.push({id:product.id, name:product.name, price:product.price, quantity:qty});
+  }
+  // Reset qty selector
+  qtySpan.textContent=0;
+  alert(`${product.name} added to cart`);
+  saveData();
+}
+
+/* =================== Cart Functions =================== */
+
+function renderCart(){
+  const tbody = document.querySelector('#cart-table tbody');
+  tbody.innerHTML='';
+  let totalQty=0, totalAmount=0;
+  cart.forEach((item,index)=>{
+    const row=document.createElement('tr');
+    row.innerHTML=`
+      <td>${item.name}</td>
+      <td>
+        <button onclick="updateCartQty(${index},-1)">-</button>
+        ${item.quantity}
+        <button onclick="updateCartQty(${index},1)">+</button>
+      </td>
+      <td>${settings.currencySymbol}${item.price}</td>
+      <td>${settings.currencySymbol}${(item.price*item.quantity).toFixed(2)}</td>
+      <td>
+        <button onclick="removeFromCart(${index})">Remove</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+    totalQty+=item.quantity;
+    totalAmount+=(item.price*item.quantity);
+  });
+  document.getElementById('cart-total').innerHTML=`
+    Total Items: ${totalQty} &nbsp; | &nbsp; Total: ${settings.currencySymbol}${totalAmount.toFixed(2)}
+  `;
+}
+
+function updateCartQty(index, delta){
+  if(index<0 || index>=cart.length) return;
+  cart[index].quantity+=delta;
+  if(cart[index].quantity<0) cart[index].quantity=0;
+  if(cart[index].quantity===0) removeFromCart(index);
+  renderCart();
+  saveData();
+}
+
+function removeFromCart(index){
+  cart.splice(index,1);
+  renderCart();
+  saveData();
+}
+
+function clearCart(){
+  if(confirm('Clear entire cart?')){
+    cart=[];
+    renderCart();
+    saveData();
+  }
+}
+
+/* =================== Generate Bill =================== */
+
+function generateBill(){
+  if(cart.length===0){
+    alert('Cart is empty');
+    return;
+  }
+  const customerName = document.getElementById('cust-name').value.trim();
+  const customerPhone = document.getElementById('cust-phone').value.trim();
+  const paymentMethod = document.getElementById('payment-method').value;
+  const notes = document.getElementById('cust-notes').value.trim();
+  const billNumber = 'BILL'+Date.now();
+  const dateTime = new Date();
+  const dateStr = dateTime.toLocaleDateString();
+  const timeStr = dateTime.toLocaleTimeString();
+
+  const billDetails = {
+    billNumber,
+    date: dateStr,
+    time: timeStr,
+    customerName,
+    customerPhone,
+    paymentMethod,
+    notes,
+    items: [...cart],
+    totalAmount: cart.reduce((a,c)=>a+c.price*c.quantity,0),
+  };
+
+  // Save bill
+  bills.push(billDetails);
+  // Save sales
+  sales.push({date: dateStr, amount: billDetails.totalAmount, items: [...cart]});
+  // Save to localStorage
+  saveData();
+
+  // Generate invoice display
+  let invoiceHTML = `
+    <h3>${settings.shopName}</h3>
+    <p>${settings.slogan}</p>
+    <p>Bill No: ${billNumber}<br/>Date: ${dateStr} ${timeStr}</p>
+    <p>Customer: ${customerName}<br/>Phone: ${customerPhone}</p>
+    <p>Payment: ${paymentMethod}</p>
+    <table style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border:1px solid #ccc;"><th style="border:1px solid #ccc;">Product</th><th style="border:1px solid #ccc;">Qty</th><th style="border:1px solid #ccc;">Price</th><th style="border:1px solid #ccc;">Total</th></tr>
+      </thead>
+      <tbody>
+  `;
+  cart.forEach(item => {
+    invoiceHTML+=`
+      <tr style="border:1px solid #ccc;">
+        <td style="border:1px solid #ccc;">${item.name}</td>
+        <td style="border:1px solid #ccc;">${item.quantity}</td>
+        <td style="border:1px solid #ccc;">${settings.currencySymbol}${item.price}</td>
+        <td style="border:1px solid #ccc;">${settings.currencySymbol}${(item.price*item.quantity).toFixed(2)}</td>
+      </tr>
+    `;
+  });
+  invoiceHTML+=`
+      </tbody>
+    </table>
+    <h4>Total: ${settings.currencySymbol}${billDetails.totalAmount.toFixed(2)}</h4>
+    <p>Notes: ${notes}</p>
+    ${settings.invoiceFooter}
+  `;
+
+  document.getElementById('invoice-details').innerHTML=invoiceHTML;
+
+  // Show billing section
+  showView('billing-section');
+
+  // Clear cart
+  cart=[];
+  renderCart();
+}
+
+/* =================== PDF & Share =================== */
+
+function downloadPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const invoiceContent = document.getElementById('invoice-details').innerText;
+  doc.text(invoiceContent, 10,10);
+  doc.save('invoice.pdf');
+}
+
+function printBill(){
+  const printContent = document.getElementById('invoice-details').innerHTML;
+  const win = window.open();
+  win.document.write('<html><head><title>Invoice</title></head><body>');
+  win.document.write(printContent);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.print();
+}
+
+function shareBill(){
+  // For simplicity, just download PDF and alert
+  downloadPDF();
+  alert('Invoice downloaded. Share via your preferred method.');
+}
+
+function newBill(){
+  showView('home-screen');
+}
+
+/* =================== QR Code Payment =================== */
+
+let currentBill = null;
+
+function showQR(bill){
+  currentBill = bill;
+  document.getElementById('qr-section').style.display='block';
+  document.getElementById('main-view').style.display='none';
+  document.getElementById('qrcode').innerHTML='';
+  new QRCode(document.getElementById("qrcode"), {
+    text: "https://pay.example.com/bill/" + bill.billNumber,
+    width: 200,
+    height: 200,
+  });
+}
+
+function payNow(){
+  alert('Payment initiated.');
+  // Simulate payment success
+  alert('Payment successful!');
+  document.getElementById('qr-section').style.display='none';
+  document.getElementById('main-view').style.display='block';
+}
+
+function paymentReceived(){
+  alert('Payment received for bill: '+currentBill.billNumber);
+  showView('home-screen');
+}
+
+function cancelPayment(){
+  document.getElementById('qr-section').style.display='none';
+  document.getElementById('main-view').style.display='block';
+}
+
+/* =================== Reports =================== */
+
+function generateReport(){
+  const reportDiv = document.getElementById('report-output');
+  reportDiv.innerHTML='Loading report...';
+}
+
+function generateDailyReport(){
+  const today = new Date().toLocaleDateString();
+  const dailySales = sales.filter(s => s.date===today);
+  displaySalesReport(dailySales, 'Daily Sales Report');
+}
+
+function generateMonthlyReport(){
+  const month = new Date().toLocaleString('default',{month:'long', year:'numeric'});
+  const monthlySales = sales.filter(s => s.date.startsWith(new Date().toLocaleString('default',{month:'long'})));
+  displaySalesReport(monthlySales, 'Monthly Sales Report');
+}
+
+function generateYearlyReport(){
+  const year = new Date().getFullYear();
+  const yearlySales = sales.filter(s => s.date.endsWith(year));
+  displaySalesReport(yearlySales, 'Yearly Sales Report');
+}
+
+function displaySalesReport(salesData, title){
+  const div = document.getElementById('report-output');
+  let html='';
+
+  html+=`<h3>${title}</h3>`;
+  if(salesData.length===0){
+    html+='<p>No sales data.</p>';
+  }else{
+    let totalSales=0;
+    let totalItems=0;
+    salesData.forEach(s => {
+      totalSales+=s.amount;
+      totalItems+=s.items.reduce((a,c)=>a+c.quantity,0);
+    });
+    html+=`<p>Total Bills: ${salesData.length}</p>`;
+    html+=`<p>Total Items Sold: ${totalItems}</p>`;
+    html+=`<p>Total Sales: ${settings.currencySymbol}${totalSales.toFixed(2)}</p>`;
+    // Best Product
+    const productCounts = {};
+    salesData.forEach(s => {
+      s.items.forEach(i => {
+        productCounts[i.name] = (productCounts[i.name] || 0)+i.quantity;
+      });
+    });
+    const bestProduct = Object.entries(productCounts).sort((a,b)=>b[1]-a[1])[0];
+    html+=`<p>Best Selling Product: ${bestProduct ? bestProduct[0] : 'N/A'} (${bestProduct ? bestProduct[1] : 0} units)</p>`;
+  }
+  div.innerHTML=html;
+}
+
+/* =================== Dashboard =================== */
+
+let chartInstance = null;
+
+function updateDashboard(){
+  const ctx = document.getElementById('salesChart').getContext('2d');
+
+  const today = new Date();
+  const labels = [];
+  const data = [];
+
+  // Generate last 7 days data
+  for(let i=6;i>=0;i--){
+    const date = new Date(today);
+    date.setDate(today.getDate()-i);
+    const dateStr = date.toLocaleDateString();
+    labels.push(dateStr);
+    const daySales = sales.filter(s => s.date===dateStr);
+    const total = daySales.reduce((a,c)=>a+c.amount,0);
+    data.push(total);
+  }
+
+  if(chartInstance) chartInstance.destroy();
+
+  chartInstance = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'Sales (last 7 days)',
+        data,
+        borderColor:'var(--dark-green)',
+        backgroundColor:'rgba(0,100,0,0.2)',
+        fill:true,
+        tension:0.3,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins: {
+        legend: { display:false }
+      }
+    }
+  });
+}
+
+/* =================== Admin Panel =================== */
+
+function checkAdminPassword(){
+  const pass = document.getElementById('admin-pass').value;
+  if(pass===adminPassword){
+    document.getElementById('admin-functions').classList.add('active');
+  }else{
+    alert('Incorrect password');
+  }
+}
+
+function logoutAdmin(){
+  document.getElementById('admin-functions').classList.remove('active');
+  document.getElementById('admin-pass').value='';
+}
+
+function changeAdminPassword(){
+  const newPass=prompt('Enter new password:',adminPassword);
+  if(newPass){
+    adminPassword=newPass;
+    saveData();
+    alert('Password changed.');
+  }
+}
+
+function addProduct(){
+  const name=prompt('Product Name:');
+  const price=prompt('Price:');
+  if(name && price){
+    const id=Date.now();
+    products.push({id, name, price:parseFloat(price), image:'https://via.placeholder.com/150?text=New'});
+    saveData();
+    renderProducts();
+  }
+}
+
+function deleteProduct(){
+  const id=prompt('Enter Product ID to delete:');
+  const index=products.findIndex(p=>p.id==id);
+  if(index>=0){
+    products.splice(index,1);
+    saveData();
+    renderProducts();
+  }else{
+    alert('Product not found.');
+  }
+}
+
+function editProduct(){
+  const id=prompt('Enter Product ID to edit:');
+  const product=products.find(p=>p.id==parseInt(id));
+  if(product){
+    const newName=prompt('New Name:',product.name);
+    const newPrice=prompt('New Price:',product.price);
+    if(newName) product.name=newName;
+    if(newPrice) product.price=parseFloat(newPrice);
+    saveData();
+    renderProducts();
+  }else{
+    alert('Product not found.');
+  }
+}
+
+function updateShopInfo(){
+  const name=prompt('Shop Name:',settings.shopName);
+  const slogan=prompt('Slogan:',settings.slogan);
+  if(name) settings.shopName=name;
+  if(slogan) settings.slogan=slogan;
+  saveData();
+  document.querySelector('header h1').textContent=settings.shopName;
+  document.querySelector('header p').textContent=settings.slogan;
+}
+
+/* =================== Backup & Restore =================== */
+
+function backupData(){
+  const dataStr=JSON.stringify({products,cart,sales,bills,settings,adminPassword});
+  const blob=new Blob([dataStr],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='pasumai_backup.json';
+  a.click();
+}
+
+function restoreData(){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='application/json';
+  input.onchange=function(e){
+    const file=e.target.files[0];
+    const reader=new FileReader();
+    reader.onload=function(){
+      try{
+        const data=JSON.parse(reader.result);
+        products=data.products || products;
+        cart=data.cart || [];
+        sales=data.sales || [];
+        bills=data.bills || [];
+        settings=data.settings || settings;
+        adminPassword=data.adminPassword || 'admin123';
+        saveData();
+        alert('Data restored.');
+        showView('home-screen');
+      }catch(e){
+        alert('Invalid file');
+      }
+    }
+    reader.readAsText(file);
+  }
+  input.click();
+}
+
+/* =================== Reset All Data =================== */
+
+function resetAll(){
+  if(confirm('Reset all data?')){
+    localStorage.removeItem('pasumaiData');
+    location.reload();
+  }
+}
+
+/* =================== Initialize =================== */
+
+function init(){
+  document.querySelector('header h1').textContent=settings.shopName;
+  document.querySelector('header p').textContent=settings.slogan;
+  renderProducts();
+  updateDashboard();
+}
+
+init();
+
+</script>
+</body>
+</html>
